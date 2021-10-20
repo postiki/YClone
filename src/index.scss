@@ -37,24 +37,17 @@ dd {
   height: 100vh;
   overflow: hidden;
 
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 20px;
-
-  .switcher{
+  .header{
     display: flex;
+    align-items: center;
+    justify-content: flex-end;
     gap: 20px;
-    a{
-      border-radius: 5px;
 
-      padding: 20px;
-
-      text-decoration: none;
-      text-align: center;
-      color: black;
-      background: coral;
+    padding: 10px;
+    border: 2px solid red;
+    .profile{
+      padding: 10px;
+      border: 2px solid red;
     }
   }
 }
