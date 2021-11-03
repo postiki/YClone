@@ -4,13 +4,13 @@ import {connect} from "react-redux";
 import {login} from "../../redux/actions/auth";
 import {Redirect} from "react-router-dom";
 
-function LogIn({dispatch, history}) {
+function LogIn({user, dispatch, history}) {
     const [loading, setLoading] = useState(false)
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
 
     let submitButton = () => {
-        setLoading(!loading)
+        setLoading(true)
 
         dispatch(login(username, password))
             .then(() => {
@@ -20,6 +20,9 @@ function LogIn({dispatch, history}) {
             .catch(() => setLoading(false));
     }
 
+    if (user.isLoggedIn) {
+        return <Redirect to="/profile" />;
+    }
 
     return (
         <div className='login'>
@@ -39,7 +42,7 @@ function LogIn({dispatch, history}) {
 
 function mapStateToProps(state) {
     return {
-        isLoggedIn: state.auth,
+        user: state.auth,
         message: state.message
     };
 }

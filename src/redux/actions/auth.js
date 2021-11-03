@@ -5,7 +5,7 @@ import {
     LOGIN_FAIL,
     LOGOUT,
     SET_MESSAGE,
-} from "./type";
+} from "./types";
 
 import AuthService from "../../service/authService";
 

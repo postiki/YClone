@@ -1,23 +1,23 @@
 import './index.scss'
 import {useEffect, useState} from "react";
 import moment from "moment";
-import axios from "axios";
+import UserService from "../../service/userService";
 
 export default function Calendar() {
     let weekDay = [...moment.weekdaysShort().slice(1), moment.weekdaysShort().slice()[0]]
-    const [rows, setRows] = useState([])
+
     const [currentMonth, setCurrentMonth] = useState(0)
-    const [currentYear, setCurrentYear] = useState(0)
-    const [dateOfMonth, setDateOfMonth] = useState(null)
+
+
+    const [rows, setRows] = useState([])
+    const [data, setData] = useState(null)
     const [showCalendar, setShowCalendar] = useState(false)
 
+
     useEffect(() => {
-        axios.get('http://localhost:8000/api/date', {
-            headers: {
-                'x-access-token': document.cookie.split('=')[1]
-            }
-        })
-            .then(r => setDateOfMonth(r.data.date))
+        UserService.getMonth().then(
+            r => setData(r.data.date)
+        )
     }, [])
 
     useEffect(() => {
@@ -29,11 +29,11 @@ export default function Calendar() {
             let daysInMonth = [];
             for (let d = 1; d <= moment().daysInMonth(); d++) {
                 if (d.toString() === moment().format('D')) {
-                    daysInMonth.push(<td className={dateOfMonth[d] ? 'calendarDay free today' : 'calendarDay disturb'}
+                    daysInMonth.push(<td className={data[d] ? 'calendarDay free today' : 'calendarDay disturb'}
                                          key={d}
                                          onClick={() => console.log(d)}>{d}</td>);
                 } else {
-                    daysInMonth.push(<td className={dateOfMonth[d] ? 'calendarDay free' : 'calendarDay disturb'} key={d}
+                    daysInMonth.push(<td className={data[d] ? 'calendarDay free' : 'calendarDay disturb'} key={d}
                                          onClick={() => console.log(d)}>{d}</td>);
                 }
             }
@@ -55,41 +55,32 @@ export default function Calendar() {
             setRows(rows)
             setShowCalendar(true)
         }
-        if (dateOfMonth) {
+        if (data) {
             setUpCalendar()
         }
-    }, [dateOfMonth, currentMonth])
+    }, [data, currentMonth])
 
-
-    useEffect(() => {
-        if (moment().add(currentMonth, 'month').format('MM') % 12 === 0) {
-            setCurrentYear(s => s + 1)
-        }
-    }, [currentMonth])
     return (
-        <>
-            {showCalendar && <div className='calendar'>
-                <div className='navigation'>
-                    <div onClick={() => setCurrentMonth(prevState => prevState - 1)}>{"<"}</div>
-                    <div
-                        onClick={() => setCurrentMonth(0)}>{moment().add(currentMonth, 'month').format('MMMM') + '' + moment().add(currentYear, 'year').format('YYYY')}</div>
-                    <div onClick={() => setCurrentMonth(prevState => prevState + 1)}>{">"}</div>
-                </div>
-                <table>
-                    <thead>
-                    <tr>
-                        {weekDay.map(days => {
-                            return <th key={days}>{days}</th>
-                        })}
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {rows.map(d => {
-                        return <tr>{d}</tr>;
+        showCalendar && <div className='calendar'>
+            <div className='navigation'>
+                <div onClick={() => setCurrentMonth(prevState => prevState - 1)}>{"<"}</div>
+                <div>{moment().add(currentMonth, 'month').format('MMMM')}</div>
+                <div onClick={() => setCurrentMonth(prevState => prevState + 1)}>{">"}</div>
+            </div>
+            <table>
+                <thead>
+                <tr>
+                    {weekDay.map(days => {
+                        return <th key={days}>{days}</th>
                     })}
-                    </tbody>
-                </table>
-            </div>}
-        </>
+                </tr>
+                </thead>
+                <tbody>
+                {rows.map(d => {
+                    return <tr>{d}</tr>;
+                })}
+                </tbody>
+            </table>
+        </div>
     )
 }

@@ -3,14 +3,14 @@ import React, {useState} from "react";
 import {connect} from "react-redux";
 import {register} from "../../redux/actions/auth";
 
-function SignUp ({dispatch, history}) {
+function SignUp ({dispatch}) {
     const [successful, setSuccessful] = useState(false)
     const [username, setUsername] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
 
    let submitButton = () => {
-        setSuccessful(!successful)
+        setSuccessful(false)
 
         dispatch(register(username, email, password))
             .then(() => setSuccessful(true))
